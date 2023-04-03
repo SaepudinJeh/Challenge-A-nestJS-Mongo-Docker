@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  auth-service:
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    command: npm run start:dev messages-service
+    env_file:
+      - ./.env
+    depends_on:
+      - mongo
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+
+  mongo:
+    image: mongo:focal
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_volume:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password123
+
+volumes:
+  mongodb_volume:
+    driver: local
