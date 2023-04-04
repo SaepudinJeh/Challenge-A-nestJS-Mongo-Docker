@@ -13,11 +13,10 @@ import * as bcrypt from 'bcrypt';
 
 import { UserRegister } from 'src/dto/userRegister.dto';
 import { UserService } from 'src/services/user.service';
-import { UserLoginDto } from 'src/dto/user.login';
-import { ConfigService } from '@nestjs/config';
+import { UserLoginDto } from 'src/dto/userLogin.dto';
 import { JwtService } from '@nestjs/jwt';
 
-@Controller('api/v1')
+@Controller('api/')
 @ApiTags('Auth')
 export class AuthController {
   constructor(
@@ -61,6 +60,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @ApiOperation({ summary: 'Login User' })
   async loginUser(
     @Body() userLogin: UserLoginDto,
     @Req() req: Request,
@@ -102,18 +102,5 @@ export class AuthController {
         message: 'Invalid credentials',
       });
     }
-  }
-
-  @Post('users')
-  async getUsers(
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<Response<any, Record<string, any>>> {
-    const users = await this.userService.findUsers();
-
-    return res.json({
-      statusCode: 200,
-      users,
-    });
   }
 }
