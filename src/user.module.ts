@@ -3,12 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
-import { AppController } from './controllers/app.controller';
+import { AuthController } from './controllers/auth.controller';
 
 import { DatabaseModule } from './database/database.module';
 import { UserRepository } from './repositories/user.repository';
 import { User, UserSchema } from './schema/user.schema';
-import { AppService } from './services/app.service';
+import { UserService } from './services/user.service';
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { AppService } from './services/app.service';
     DatabaseModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
-  controllers: [AppController],
-  providers: [AppService, UserRepository],
+  controllers: [AuthController],
+  providers: [UserService, UserRepository],
 })
-export class AppModule {}
+export class UserModule {}

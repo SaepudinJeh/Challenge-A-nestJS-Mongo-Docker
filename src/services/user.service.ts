@@ -4,7 +4,7 @@ import { UserRepository } from 'src/repositories/user.repository';
 import { User } from 'src/schema/user.schema';
 
 @Injectable()
-export class AppService {
+export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async registerUser(userRegister: UserRegister): Promise<User | null> {

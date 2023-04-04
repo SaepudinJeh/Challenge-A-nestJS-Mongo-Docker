@@ -12,20 +12,19 @@ import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 
 import { UserRegister } from 'src/dto/userRegister.dto';
-import { AppService } from 'src/services/app.service';
+import { UserService } from 'src/services/user.service';
 import { UserLoginDto } from 'src/dto/user.login';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('api/v1')
 @ApiTags('Auth')
-export class AppController {
+export class AuthController {
   constructor(
-    private readonly appService: AppService,
-    private readonly configService: ConfigService,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
-  private readonly logger: Logger = new Logger(AppController.name);
+  private readonly logger: Logger = new Logger(AuthController.name);
 
   @Post('register')
   @ApiOperation({ summary: 'Register User' })
@@ -40,7 +39,7 @@ export class AppController {
     );
 
     try {
-      const { password, ...user } = await this.appService.registerUser({
+      const { password, ...user } = await this.userService.registerUser({
         ...userRegister,
         password: hashPassword,
       });
@@ -68,7 +67,7 @@ export class AppController {
     @Res() res: Response,
   ): Promise<Response<any, Record<string, any>>> {
     try {
-      const user = await this.appService.findUser(userLogin.username);
+      const user = await this.userService.findUser(userLogin.username);
       const comparePassword = await bcrypt.compare(
         userLogin.password,
         user.password,
@@ -110,7 +109,7 @@ export class AppController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    const users = await this.appService.findUsers();
+    const users = await this.userService.findUsers();
 
     return res.json({
       statusCode: 200,
