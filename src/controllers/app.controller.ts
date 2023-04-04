@@ -14,11 +14,17 @@ import * as bcrypt from 'bcrypt';
 import { UserRegister } from 'src/dto/userRegister.dto';
 import { AppService } from 'src/services/app.service';
 import { UserLoginDto } from 'src/dto/user.login';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('api/v1')
 @ApiTags('Auth')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+  ) {}
   private readonly logger: Logger = new Logger(AppController.name);
 
   @Post('register')
@@ -68,6 +74,7 @@ export class AppController {
         user.password,
       );
 
+      // comparing password
       if (!comparePassword) {
         return res.status(HttpStatus.UNAUTHORIZED).json({
           statusCode: HttpStatus.UNAUTHORIZED,
@@ -75,9 +82,19 @@ export class AppController {
         });
       }
 
+      // generate token
+      const { password, ...newUser } = user;
+
+      const token = this.jwtService.sign({
+        username: newUser.username,
+        _id: newUser._id,
+        email: newUser.email,
+      });
+
       return res.status(200).json({
         statusCode: 200,
-        user,
+        userInfo: { ...newUser },
+        token,
       });
     } catch (error) {
       this.logger.error(error.status);

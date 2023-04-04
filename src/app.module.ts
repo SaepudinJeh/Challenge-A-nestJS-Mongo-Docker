@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
 import { AppController } from './controllers/app.controller';
@@ -18,6 +19,13 @@ import { AppService } from './services/app.service';
         PORT: Joi.number().required(),
       }),
       envFilePath: './.env',
+    }),
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get<string>('SECRET_KEY_JWT'),
+      }),
+      inject: [ConfigService],
     }),
     DatabaseModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
