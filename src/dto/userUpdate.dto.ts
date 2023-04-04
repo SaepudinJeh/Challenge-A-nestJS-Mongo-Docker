@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUrl,
 } from 'class-validator';
 
 export class UserUpdateDto {
@@ -21,13 +22,12 @@ export class UserUpdateDto {
   displayName?: string;
 
   @IsOptional()
-  @IsString()
-  @ApiProperty({ required: false, type: String })
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
   image?: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ required: false, type: String, default: 'gender' })
+  @ApiProperty({ required: false, type: String })
   @IsIn(['male', 'female'], { message: 'Gender must be "male" or "female"' })
   gender?: string;
 

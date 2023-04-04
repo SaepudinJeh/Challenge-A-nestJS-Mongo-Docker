@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as compression from 'compression';
 import helmet from 'helmet';
+import { join } from 'path';
+import * as express from 'express';
 // import * as csurf from 'csurf';
 
 async function bootstrap() {
@@ -25,6 +27,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/v1', app, document);
+
+  app.use('/images', express.static(join(__dirname, '..', 'images')));
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get('PORT'));
