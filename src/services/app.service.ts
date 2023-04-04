@@ -10,4 +10,17 @@ export class AppService {
   async registerUser(userRegister: UserRegister): Promise<User | null> {
     return await this.userRepository.create(userRegister);
   }
+
+  async findUsers(): Promise<User[] | null> {
+    return await this.userRepository.find({});
+  }
+
+  async findUser(query: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      $or: [
+        { username: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } },
+      ],
+    });
+  }
 }
